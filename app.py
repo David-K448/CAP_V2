@@ -96,9 +96,18 @@ def translate_button_click():
         return 'Button clicked successfully!', 200
     
 def ggl_trnslt():
-    global translationG
     #create cloud translate instance
     translate_client = translate.Client()
+
+    # detect the language in 'translationG'
+    detection = translate_client.detect_language(transcriptionG)
+    detected_lang = detection['language']
+    print('Language Detected = ' + detected_lang +'\n')
+
+    # get the list of available languages to translate to, based on the originally detected language -- not implemented yet
+    
+    # sets target language
+    # ----- CHANGE --- needs to be dynamic based on user selection, implementd via a selection box on the second html page 
     target_language = 'es'
 
     translation = translate_client.translate(
@@ -107,6 +116,9 @@ def ggl_trnslt():
     )
     translated_text = translation['translatedText']
     print(translated_text)
+
+
+
 
 if __name__ == '__main__':
     app.run()
