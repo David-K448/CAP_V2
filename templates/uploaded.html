@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>File Upload Successful</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style2.css') }}">
+</head>
+<body>
+    <h1>File Upload Success</h1>
+    {% with messages = get_flashed_messages() %}
+        {% for message in messages %}
+            <div>{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+    <p>Here is your uploaded audio file:</p>
+    <audio controls>
+        <!-- triggers the uploaded_file fn in app.py-->
+        <source src="{{ url_for('uploaded_file', filename=file.filename) }}" type="audio/wav">
+    </audio>
+
+    <button id="transcribe-btn">Transcribe Audio</button>
+
+    
+    <button id="translate-btn">Translate Audio</button>
+
+    
+<!--when the "transcribe-btn" element is clicked, the JavaScript code sends a POST request to the '/scribe_btn_click' URL of the Flask server, triggering the corresponding Flask route function.-->
+	<script>
+		document.getElementById('transcribe-btn').addEventListener('click', function() {
+			var xhr = new XMLHttpRequest();
+			xhr.open('POST', '/scribe_btn_click', true);
+			xhr.send();
+		});
+	</script>
+
+<script>
+    document.getElementById('translate-btn').addEventListener('click', function() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/translate_btn_click', true);
+        xhr.send();
+    });
+</script>
+
+</body>
+</html>
+ 
+
