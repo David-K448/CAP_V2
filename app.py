@@ -33,18 +33,34 @@ def upload():
     except KeyError:
         flash("No file selected.")
         return redirect('/')
-    
-    MAX_FILESIZE = 25 * 1024 * 1024 # 25MB in bytes
-    if file.content_length > MAX_FILESIZE:
-        flash("File is too large. Max file size is 25MB.")
-        return redirect('/')
-    
+
     if file.filename == '':
         flash('No selected file')
         return redirect('/')
-        
-    file.save(os.path.join(os.getcwd(), 'tmp', file.filename))
+
+    MAX_FILESIZE = 25 * 1024 * 1024  # 25MB in bytes
+    if file.content_length > MAX_FILESIZE:
+        flash("File is too large. Max file size is 25MB.")
+        return redirect('/')
+
+    # Check the size of the file before saving
+    file.seek(0, os.SEEK_END)
+    file_size = file.tell()
+    file.seek(0)
+
+    if file_size > MAX_FILESIZE:
+        flash("File is too large. Max file size is 25MB.")
+        return redirect('/')
+
+    try:
+        file.save(os.path.join(os.getcwd(), 'tmp', file.filename))
+    except FileNotFoundError:
+        flash("File not found.")
+        return redirect('/')
+
     return render_template('uploaded.html', file=file)
+
+
 
 
 # Handle requests for the '/uploads/<filename>' URL pattern. occurs when a user clicks on a link or submits a form that includes the URL for a specific file
@@ -72,6 +88,7 @@ def button_click():
         return 'Button clicked successfully!', 200
     
 #Perform speech transcription using the OpenAI Whisper model or the Google Cloud Speech-to-Text API.
+# also saves original transcription to a directory for downloading later
 def op_api():
     global transcriptionG
     #still deciding on whether to use OPENAI whisper model or google cloud speech-to-text api
@@ -80,6 +97,14 @@ def op_api():
         transcription_text = transcript.text
         transcriptionG = transcription_text
         print(transcription_text)
+
+    # makes filename for the og_transcription_outputs directory
+    txt_filename = fileNameA.split(".")[0]
+    #creates file, filename is based off original files name, stored in
+    with open(f'transcripts/og_transcription_output/{txt_filename}.txt', 'w') as f:
+        f.write(transcription_text)
+
+        
 
 # performs the translation using the google cloud translation api
 @app.route('/translate_btn_click', methods=['POST'])
@@ -117,6 +142,13 @@ def ggl_trnslt():
     )
     translated_text = translation['translatedText']
     print(translated_text)
+
+    # makes filename for the og_transcription_outputs directory
+    txt_translate_filename = target_language + '_' + fileNameA.split(".")[0]
+    print(txt_translate_filename)
+    #creates file, filename is based off original files name, adds language code, stored in
+    with open(f'transcripts/translated_transp_output/{txt_translate_filename}.txt', 'w') as f:
+        f.write(translated_text)
 
 
 
