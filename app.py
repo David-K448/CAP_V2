@@ -107,7 +107,8 @@ def ggl_trnslt():
     # get the list of available languages to translate to, based on the originally detected language -- not implemented yet
     
     # sets target language
-    # ----- CHANGE --- needs to be dynamic based on user selection, implementd via a selection box on the second html page 
+    # ----- CHANGE THIS--- 
+    # needs to be dynamic based on user selection, implementd via a selection box on the second html page 
     target_language = 'es'
 
     translation = translate_client.translate(
