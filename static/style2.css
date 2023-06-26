@@ -3,3 +3,29 @@
     padding: 0;
     text-align: center;
 }
+
+body {
+    font-size: 40px;
+    background: radial-gradient(#2DB5B0 0%, #054890 100%);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+.scroll-box {
+    height: 200px;
+    /* Adjust the height as needed */
+    width: 400px;
+    /* Adjust the width as needed */
+    border: 1px solid #000;
+    overflow-y: auto;
+    margin-top: 20px;
+}
+
+/* .scroll-content {
+} */
