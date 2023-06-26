@@ -5,11 +5,9 @@
 }
 
 body {
+    font-size: 40px;
+    background: radial-gradient(#2DB5B0 0%, #054890 100%);
 }
-
-/* #84CDCA
-#E8A87C
-#C38D9D */
 
 .file {
     opacity: 0;
@@ -18,20 +16,26 @@ body {
     position: absolute;
 }
 
+
 h1 {
     display: inline-block;
     justify-content: center;
-    width: 50%;
+    width: 100%;
     padding-top: 4rem;
+    Color: white;
+    font-family: "Book Antiqua", Palatino, "Palatino Linotype", "Palatino LT STD", Georgia, serif;
+    font-size: 49px;
 }
 
 h3 {
-    padding-top: 3rem;
+    padding-top: 2rem;
+    font-family: "Book Antiqua", Palatino, "Palatino Linotype", "Palatino LT STD", Georgia, serif;
 }
 
 h4 {
-    padding-top: 3rem;
+    padding-top: 1rem;
     padding-bottom: 2rem;
+    font-family: "Book Antiqua", Palatino, "Palatino Linotype", "Palatino LT STD", Georgia, serif;
 }
 
 .file-input {
@@ -46,7 +50,7 @@ h4 {
 }
 
 .label-cont {
-    margin-top: 2rem;
+    margin-top: 1rem;
     margin-bottom: 2rem;
 }
 
@@ -60,5 +64,14 @@ h4 {
 }
 
 #upld-butn {
-    
+    border-radius: 50px;
+}
+
+.scroll-box {
+    width: 300px;
+    /* Adjust the width as needed */
+    height: 200px;
+    /* Adjust the height as needed */
+    overflow: auto;
+    position: relative;
 }

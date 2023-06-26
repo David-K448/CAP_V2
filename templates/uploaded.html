@@ -1,46 +1,61 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>File Upload Successful</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style2.css') }}">
-</head>
-<body>
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/style1.css') }}"> -->
+    <link rel="stylesheet" href="static/style1.css" />
+  </head>
+  <body>
     <h1>File Upload Success</h1>
-    {% with messages = get_flashed_messages() %}
-        {% for message in messages %}
-            <div>{{ message }}</div>
-        {% endfor %}
-    {% endwith %}
+    {% with messages = get_flashed_messages() %} {% for message in messages %}
+    <div>{{ message }}</div>
+    {% endfor %} {% endwith %}
     <p>Here is your uploaded audio file:</p>
     <audio controls>
-        <!-- triggers the uploaded_file fn in app.py-->
-        <source src="{{ url_for('uploaded_file', filename=file.filename) }}" type="audio/wav">
+      <!-- triggers the uploaded_file fn in app.py-->
+      <source
+        src="{{ url_for('uploaded_file', filename=file.filename) }}"
+        type="audio/wav"
+      />
     </audio>
 
     <button id="transcribe-btn">Transcribe Audio</button>
 
-    
+    <div class="scroll-box">
+      <div class="scroll-content">
+
+      </div>
+    </div>
+
     <button id="translate-btn">Translate Audio</button>
 
-    
-<!--when the "transcribe-btn" element is clicked, the JavaScript code sends a POST request to the '/scribe_btn_click' URL of the Flask server, triggering the corresponding Flask route function.-->
-	<script>
-		document.getElementById('transcribe-btn').addEventListener('click', function() {
-			var xhr = new XMLHttpRequest();
-			xhr.open('POST', '/scribe_btn_click', true);
-			xhr.send();
-		});
-	</script>
+    <script>
+      document
+        .getElementById("transcribe-btn")
+        .addEventListener("click", function () {
+          var xhr = new XMLHttpRequest();
+          xhr.open("POST", "/scribe_btn_click", true);
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+              var response = xhr.responseText; // Retrieve the return value as a string
+              // Use the response string as needed
+              console.log(response); // Example: Log the response to the console
+              var scrollContent = document.querySelector(".scroll-content"); // Get the scroll content element
+              scrollContent.innerHTML = response; // Update the inner HTML text
+            }
+          };
+          xhr.send();
+        });
+    </script>
 
-<script>
-    document.getElementById('translate-btn').addEventListener('click', function() {
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/translate_btn_click', true);
-        xhr.send();
-    });
-</script>
-
-</body>
+    <script>
+      document
+        .getElementById("translate-btn")
+        .addEventListener("click", function () {
+          var xhr = new XMLHttpRequest();
+          xhr.open("POST", "/translate_btn_click", true);
+          xhr.send();
+        });
+    </script>
+  </body>
 </html>
- 
-

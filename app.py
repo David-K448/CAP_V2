@@ -31,17 +31,32 @@ def upload():
     try:
         file = request.files['file']
     except KeyError:
-        flash("No file selected.")
-        return redirect('/')
+        # flash("No file selected.")
+        # return redirect('/')
+        return '''
+            <script>
+                window.location.href = "/";
+                alert("No file selected.");
+            </script>'''
 
     if file.filename == '':
-        flash('No selected file')
-        return redirect('/')
+        # flash('No selected file')
+        # return redirect('/')
+         return '''
+            <script>
+                window.location.href = "/";
+                alert("No file selected.");
+            </script>'''
 
     MAX_FILESIZE = 25 * 1024 * 1024  # 25MB in bytes
     if file.content_length > MAX_FILESIZE:
-        flash("File is too large. Max file size is 25MB.")
-        return redirect('/')
+        # flash("File is too large. Max file size is 25MB.")
+        # return redirect('/')
+        return '''
+            <script>
+                window.location.href = "/";
+                alert("File is too large. Max file size is 25MB.");
+            </script>'''
 
     # Check the size of the file before saving
     file.seek(0, os.SEEK_END)
@@ -49,17 +64,26 @@ def upload():
     file.seek(0)
 
     if file_size > MAX_FILESIZE:
-        flash("File is too large. Max file size is 25MB.")
-        return redirect('/')
+        # flash("File is too large. Max file size is 25MB.")
+        # return redirect('/')
+        return '''
+            <script>
+                window.location.href = "/";
+                alert("File is too large. Max file size is 25MB.");
+            </script>'''
 
     try:
         file.save(os.path.join(os.getcwd(), 'tmp', file.filename))
     except FileNotFoundError:
-        flash("File not found.")
-        return redirect('/')
+        # flash("File not found.")
+        # return redirect('/')
+        return '''
+            <script>
+                window.location.href = "/";
+                alert("File is too large. Max file size is 25MB.");
+            </script>'''
 
     return render_template('uploaded.html', file=file)
-
 
 
 
@@ -84,8 +108,9 @@ def button_click():
     else:
         last_click_time = now
         # Handle the button click
-        op_api()
-        return 'Button clicked successfully!', 200
+        transcription_text = op_api() #gets transcription
+        return transcription_text, 200 #returns to the js script 
+       
     
 #Perform speech transcription using the OpenAI Whisper model or the Google Cloud Speech-to-Text API.
 # also saves original transcription to a directory for downloading later
@@ -96,7 +121,7 @@ def op_api():
         transcript = openai.Audio.transcribe(model="whisper-1", file=audio_file, max_tokens=2000)
         transcription_text = transcript.text
         transcriptionG = transcription_text
-        print(transcription_text)
+        # print(transcription_text)
 
     # makes filename for the og_transcription_outputs directory
     txt_filename = fileNameA.split(".")[0]
@@ -104,6 +129,7 @@ def op_api():
     with open(f'transcripts/og_transcription_output/{txt_filename}.txt', 'w') as f:
         f.write(transcription_text)
 
+    return transcription_text # returns transcription string
         
 
 # performs the translation using the google cloud translation api
