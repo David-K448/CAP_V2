@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, redirect, url_for, flash, send_from_directory
+from flask import Flask, render_template, request, session, redirect, url_for, flash, send_from_directory, send_file
 import os
 import io
 import tempfile
@@ -18,6 +18,7 @@ api_key = os.getenv('OPENAI_KEY')
 openai.api_key = api_key
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = r"C:\Users\killi\OneDrive\Desktop\stuffgpt\translation-stuff-386514-c6a00efd32ba.json"
 fileNameA = ''
+fileNameB = ''
 
 
 # Handle requests to the root URL ('/').
@@ -92,7 +93,6 @@ def upload():
 def uploaded_file(filename):
     global fileNameA
     fileNameA = filename 
-    print(fileNameA)
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
@@ -130,7 +130,26 @@ def op_api():
         f.write(transcription_text)
 
     return transcription_text # returns transcription string
-        
+
+# DOWNLOADS ORIGINAL TRANSCRIPTION ON BUTTON CLICK 
+@app.route('/transcribe_dwnld_btn_click')
+def download_transcription():
+    txt_filename = fileNameA.split(".")[0]
+    file_path = f'transcripts/og_transcription_output/{txt_filename}.txt'
+    if os.path.exists(file_path):
+        return send_file(file_path, as_attachment=True)
+    else:
+        return "File not found."
+    
+@app.route('/translate_dwnld_btn_click')
+def download_translation():
+    txt_filename = fileNameB
+    file_path = f'transcripts/translated_transp_output/{txt_filename}.txt'
+    if os.path.exists(file_path):
+        return send_file(file_path, as_attachment=True)
+    else:
+        return "File not found."
+    
 
 # performs the translation using the google cloud translation api
 @app.route('/translate_btn_click', methods=['POST'])
@@ -143,12 +162,17 @@ def translate_button_click():
     else:
         last_click_time = now
         # Handle the button click
-        ggl_trnslt()
-        return 'Button clicked successfully!', 200
+        selected_lang = request.form.get('selectedValue')
+        translated_text = ggl_trnslt(selected_lang)
+        return translated_text, 200
     
-def ggl_trnslt():
+def ggl_trnslt(selected_lang):
+    global fileNameB
     #create cloud translate instance
     translate_client = translate.Client()
+
+    selected_lang=selected_lang
+    
 
     # detect the language in 'translationG'
     detection = translate_client.detect_language(transcriptionG)
@@ -156,25 +180,23 @@ def ggl_trnslt():
     print('Language Detected = ' + detected_lang +'\n')
 
     # get the list of available languages to translate to, based on the originally detected language -- not implemented yet
-    
-    # sets target language
-    # ----- CHANGE THIS--- 
-    # needs to be dynamic based on user selection, implementd via a selection box on the second html page 
-    target_language = 'es'
 
     translation = translate_client.translate(
         transcriptionG,
-        target_language=target_language
+        target_language=selected_lang
     )
     translated_text = translation['translatedText']
     print(translated_text)
 
     # makes filename for the og_transcription_outputs directory
-    txt_translate_filename = target_language + '_' + fileNameA.split(".")[0]
-    print(txt_translate_filename)
+    txt_translate_filename = selected_lang + '_' + fileNameA.split(".")[0]
+    fileNameB = txt_translate_filename
+    #print("filenameB=" + fileNameB)
     #creates file, filename is based off original files name, adds language code, stored in
     with open(f'transcripts/translated_transp_output/{txt_translate_filename}.txt', 'w') as f:
         f.write(translated_text)
+
+    return translated_text
 
 
 
